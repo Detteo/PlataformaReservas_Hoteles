@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelSys | Sistema Hotelero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="#inicio" class="logo">
+                <span class="logo-icon">H</span>
+                <span>Hotel<span>Sys</span></span>
+            </a>
+            <nav class="nav-menu">
+                <a href="#inicio" class="active">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#hoteles">Hoteles</a>
+                <a href="#arquitectura">Proyecto</a>
+                <a href="#equipo">Equipo</a>
+            </nav>
+            
+            <div class="auth-buttons" style="display: flex; gap: 10px; margin-left: auto;">
+                <a href="#login" class="nav-button" style="background: transparent; color: inherit; border: 1px solid currentColor;">Ingresar</a>
+                <a href="#registro" class="nav-button">Registrarse</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <main>
+        <section id="inicio" class="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <p class="eyebrow">SISTEMA DISTRIBUIDO · DOCKER</p>
+                    <h1>Gestiona tu experiencia <span>hotelera</span> de forma inteligente.</h1>
+                    <p class="hero-description">
+                        HotelSys es un sistema distribuido diseñado para gestionar hoteles, usuarios, disponibilidad y reservas mediante servicios independientes conectados a través de una arquitectura moderna.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#hoteles" class="primary-button">Explorar hoteles <span>→</span></a>
+                        <a href="#arquitectura" class="secondary-button">Ver arquitectura</a>
+                    </div>
+                    <div class="hero-info">
+                        <div><strong>03</strong><span>Servicios principales</span></div>
+                        <div><strong>Docker</strong><span>Contenedores</span></div>
+                        <div><strong>API</strong><span>Comunicación</span></div>
+                    </div>
+                </div>
+
+                <div class="hero-card">
+                    <div class="hero-card-top">
+                        <span class="status"><span class="status-dot"></span>Sistema activo</span>
+                        <span class="docker-label">Docker</span>
+                    </div>
+                    <div class="hero-card-icon">H</div>
+                    <h3>HotelSys</h3>
+                    <p>Plataforma distribuida para la administración de servicios hoteleros.</p>
+                    <div class="hero-card-line"></div>
+                    <div class="hero-card-services">
+                        <div><span class="service-number">01</span> Usuarios</div>
+                        <div><span class="service-number">02</span> Hoteles</div>
+                        <div><span class="service-number">03</span> Reservas</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             BUSCADOR
+        ========================== -->
+        <section class="search-section">
+            <div class="container">
+                <div class="booking-preview">
+                    <div class="search-title">
+                        <span class="search-icon">⌕</span>
+                        <div>
+                            <span>ENCUENTRA TU HOTEL</span>
+                            <strong>Explora nuestros servicios</strong>
+                        </div>
+                    </div>
+                    <div class="search-field">
+                        <label>Servicio</label>
+                        <select id="service-select">
+                            <option value="hoteles">Hoteles y espacios</option>
+                            <option value="usuarios">Usuarios</option>
+                            <option value="reservas">Reservas</option>
+                        </select>
+                    </div>
+                    <button id="buscar-button" class="search-button" type="button">
+                        Buscar <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             SERVICIOS
+        ========================== -->
+        <section id="servicios" class="section services">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">NUESTROS SERVICIOS</p>
+                        <h2>Todo lo necesario <br> en un solo sistema.</h2>
+                    </div>
+                    <p class="section-description">
+                        HotelSys está dividido en servicios independientes que permiten una gestión organizada, escalable y eficiente del sistema hotelero.
+                    </p>
+                </div>
+
+                <div class="services-grid">
+                    <article class="service-card">
+                        <div class="service-card-number">01</div>
+                        <div class="service-icon">👤</div>
+                        <h3>Usuarios</h3>
+                        <p>Gestiona el registro, autenticación, perfiles y diferentes roles de los usuarios del sistema.</p>
+                        <span class="service-status">Servicio definido</span>
+                    </article>
+
+                    <article class="service-card featured">
+                        <div class="service-card-number">02</div>
+                        <div class="service-icon">🏨</div>
+                        <h3>Espacios / Hoteles</h3>
+                        <p>Administra hoteles, habitaciones, espacios disponibles y la información relacionada.</p>
+                        <span class="service-status">Servicio definido</span>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="service-card-number">03</div>
+                        <div class="service-icon">📅</div>
+                        <h3>Reservas</h3>
+                        <p>Permite consultar disponibilidad y administrar las reservas realizadas por los usuarios.</p>
+                        <span class="service-status">Servicio definido</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             HOTELES
+        ========================== -->
+        <section id="hoteles" class="section hotels">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">SERVICIO CONECTADO</p>
+                        <h2>Hoteles disponibles</h2>
+                    </div>
+                    <p class="section-description">
+                        Esta sección está preparada para recibir información desde el servicio de Hoteles mediante la conexión directa con el contenedor.
+                    </p>
+                </div>
+
+                <div id="hoteles-container" class="hoteles-container">
+                    <div class="connection-message">
+                        <div class="connection-icon">⚡</div>
+                        <div>
+                            <h3>Servicio preparado</h3>
+                            <p>Cuando el servicio de Hoteles esté conectado mediante Docker Compose, aquí aparecerán los hoteles disponibles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             ARQUITECTURA
+        ========================== -->
+        <section id="arquitectura" class="section architecture">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">ARQUITECTURA DEL PROYECTO</p>
+                        <h2>¿Cómo funciona HotelSys?</h2>
+                    </div>
+                    <p class="section-description">
+                        La aplicación utiliza una arquitectura distribuida donde los servicios web se comunican directamente.
+                    </p>
+                </div>
+
+                <div class="architecture-flow">
+                    <div class="architecture-node">
+                        <div class="node-icon">👤</div>
+                        <span class="node-label">CLIENTE</span>
+                        <strong>Usuario</strong>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="architecture-node main-node">
+                        <div class="node-icon">🏠</div>
+                        <span class="node-label">VISTA PRINCIPAL</span>
+                        <strong>HOME · Docker</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             EQUIPO
+        ========================== -->
+        <section id="equipo" class="section team">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">EQUIPO DE TRABAJO</p>
+                        <h2>Construido en equipo.</h2>
+                    </div>
+                    <p class="section-description">
+                        Proyecto académico desarrollado utilizando tecnologías de contenedores y arquitectura distribuida.
+                    </p>
+                </div>
+
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-avatar">JL</div>
+                        <div>
+                            <span>INTEGRANTE</span>
+                            <h3>Jonathan Gallego</h3>
+                            <p>Desarrollo e integración</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>
+                <a href="#inicio" class="logo footer-logo">
+                    <span class="logo-icon">H</span>
+                    <span>Hotel<span>Sys</span></span>
+                </a>
+                <p>Sistema distribuido para la gestión hotelera.</p>
+            </div>
+            <div class="footer-right">
+                <span>Docker · API · Microservicios</span>
+                <span>© 2026 HotelSys</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
