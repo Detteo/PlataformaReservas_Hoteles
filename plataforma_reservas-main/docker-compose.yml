@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  home:
+    build: ./home_hotel
+    ports:
+      - "8080:80" # Cambiamos 'expose' por 'ports'
+
+  usuarios:
+    image: node:20-alpine # Imagen ideal si es una API, o mysql:8.0 si es base de datos
+    ports:
+      - "3000:3000"
+    # environment:
+    #   - PORT=3000
+
+  espacios:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: espacios
+
+  reservas:
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: reservas
