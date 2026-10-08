@@ -1,0 +1,5 @@
+##dependencias que se deben instalar para servicios
+
+flask
+requests
+mysql-connector-python
