@@ -1,30 +1,50 @@
-version: '3.8'
-
 services:
-  home:
-    build: ./home_hotel
-    ports:
-      - "8080:80" # Cambiamos 'expose' por 'ports'
 
-  usuarios:
-    image: node:20-alpine # Imagen ideal si es una API, o mysql:8.0 si es base de datos
+  clientes:
+    build: ./clientes
     ports:
-      - "3000:3000"
-    # environment:
-    #   - PORT=3000
+      - "5002:5000"
+    env_file:
+      - .env
 
-  espacios:
-    image: mysql:8.0
+  hoteles:
+    build: ./hoteles
     ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: espacios
+      - "5001:5000"
+    env_file:
+      - .env
 
-  reservas:
-    image: mysql:8.0
-    ports:
-      - "3308:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: reservas
+      
+
+  mysql_clientes:
+   image: mysql:8.0
+   environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: clientes
+
+   ports:
+    - "3306:3306"
+   volumes:
+    - mysql_clientes_data:/var/lib/mysql
+
+  mysql_hoteles:
+   image: mysql:8.0
+   environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: hoteles
+
+   ports:
+    - "3307:3306"
+   volumes:
+    - mysql_hoteles_data:/var/lib/mysql
+
+
+
+volumes:
+  mysql_clientes_data:
+  mysql_hoteles_data:
+  
+
+
+
+  
