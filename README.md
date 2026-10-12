@@ -6,7 +6,7 @@ Este proyecto es una plataforma distribuida para la gestión e infraestructura d
 ---
 
 ## 👥 Equipo de Trabajo
-* **Jhon Leon**
+* **Jonthán gallego**
 * **Daniel Guzmán**
 
 ---
