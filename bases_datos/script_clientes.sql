@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS clientes;
+USE clientes;
+
+CREATE TABLE IF NOT EXISTS clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    hotel_id INT NOT NULL
+);

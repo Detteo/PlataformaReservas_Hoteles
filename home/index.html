@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelRes | Plataforma de Reservas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">🏨 Hotel<span>Res</span></a>
+            <nav class="nav-links">
+                <a href="#inicio">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#datos">Consultar Hoteles</a>
+                <a href="#arquitectura">Arquitectura</a>
+                <a href="#equipo">Equipo</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECCIÓN INICIO / HERO -->
+        <section id="inicio" class="hero">
+            <div class="container hero-grid">
+                <div class="hero-text">
+                    <span class="badge">SISTEMA DISTRIBUIDO CON DOCKER</span>
+                    <h1>Plataforma de Reservas e Infraestructura Hotelera</h1>
+                    <p>
+                        Sistema basado en microservicios independientes (Clientes y Hoteles), 
+                        comunicación REST síncrona y bases de datos relacionales persistentes en contenedores.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#datos" class="btn primary">Probar Servicios →</a>
+                        <a href="#arquitectura" class="btn secondary">Ver Arquitectura</a>
+                    </div>
+                </div>
+                <div class="hero-card">
+                    <div class="card-status">● Contenedores Activos</div>
+                    <h3>Arquitectura Distribuida</h3>
+                    <p>Servicios desacoplados con persistencia aislada.</p>
+                    <ul class="card-list">
+                        <li><span>✓</span> Servicio Hoteles (Puerto 5001)</li>
+                        <li><span>✓</span> Servicio Clientes (Puerto 5002)</li>
+                        <li><span>✓</span> Bases de datos MySQL independientes</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN SERVICIOS IMPLEMENTADOS -->
+        <section id="servicios" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="subtitle">MÓDULOS DEL SISTEMA</span>
+                    <h2>Servicios Principales</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🏨</div>
+                        <h3>Servicio de Hoteles</h3>
+                        <p>Administra la información general de los alojamientos (nombre, ciudad, dirección) y expone endpoints REST completos.</p>
+                        <span class="tech-tag">Flask + MySQL</span>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">👤</div>
+                        <h3>Servicio de Clientes</h3>
+                        <p>Gestiona los usuarios y se comunica internamente con el servicio de hoteles mediante solicitudes HTTP REST síncronas.</p>
+                        <span class="tech-tag">Flask + Requests + MySQL</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN PRUEBA DE CONEXIÓN CON EL BACKEND -->
+        <section id="datos" class="section bg-light">
+            <div class="container">
+                <div class="section-title">
+                    <span class="subtitle">INTERACCIÓN EN VIVO</span>
+                    <h2>Consulta de Hoteles en el Sistema</h2>
+                    <p>Haz clic para consultar directamente los registros almacenados en el microservicio de hoteles.</p>
+                </div>
+                <div class="center-box">
+                    <button id="btn-cargar" class="btn primary">Cargar Hoteles Registrados</button>
+                </div>
+                <div id="hoteles-container" class="hotels-grid">
+                    <!-- Aquí se inyectarán los hoteles mediante JavaScript -->
+                    <p class="placeholder-text">Aún no se han cargado los datos. Presiona el botón superior.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN ARQUITECTURA -->
+        <section id="arquitectura" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="subtitle">DISEÑO TÉCNICO</span>
+                    <h2>Esquema de Comunicación</h2>
+                </div>
+                <div class="arch-box">
+                    <div class="arch-node">Cliente / Frontend<br><small>Nginx</small></div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-node">Microservicio Clientes<br><small>Puerto 5002</small></div>
+                    <div class="arch-arrow">⇄ HTTP</div>
+                    <div class="arch-node">Microservicio Hoteles<br><small>Puerto 5001</small></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN EQUIPO -->
+        <section id="equipo" class="section bg-light">
+            <div class="container">
+                <div class="section-title">
+                    <span class="subtitle">COLABORACIÓN</span>
+                    <h2>Equipo de Desarrollo</h2>
+                </div>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <h3>Jonathán Gallego</h3>
+                        <p></p>
+                    </div>
+                    <div class="team-card">
+                        <h3>Daniel Guzmán</h3>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>© 2026 Plataforma de Reservas de Hoteles - Todos los derechos reservados.</p>
+            <p>Ejecutado con Docker Compose 🐳</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
