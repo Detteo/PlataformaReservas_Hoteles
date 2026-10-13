@@ -22,7 +22,6 @@ Este proyecto es una plataforma distribuida para la gestión e infraestructura d
 ---
 
 # PARTE 2 – IDENTIFICAR LOS SERVICIOS Y ESTADO DE IMPLEMENTACIÓN
-
 El sistema se divide en servicios independientes. Actualmente, el proyecto cuenta con el **Segundo Avance de implementación** funcional:
 
 | Módulo / Servicio | Estado Actual | Responsabilidad Principal | Base de Datos |
