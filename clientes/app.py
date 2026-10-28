@@ -150,47 +150,36 @@ def actualizar(id):
     })
 
 
-
-
-
 @app.route("/clientes/<int:id>/detalle")
 def detalle(id):
+    tiempo_maximo = float(os.getenv("CLIENTES_TIMEOUT", "4"))
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
-
-    sql = """
-    SELECT * FROM clientes
-    WHERE id = %s
-    """
-
-    cursor.execute(sql, (id,))
-    clienteEncontrado = cursor.fetchone()
-
+    cursor.execute(
+        "SELECT * FROM clientes WHERE id = %s", (id,)
+        )
+    cliente = cursor.fetchone()
     cursor.close()
     conexion.close()
-
-    if clienteEncontrado is None:
+    if cliente is None:
+        return jsonify({ "mensaje": "Cliente no encontrado"}), 404
+    hoteles_id = cliente["hotel_id"]
+    url = (os.getenv("URL_HOTELES") + "/hoteles/" + str(hoteles_id))
+    try:
+        respuesta = requests.get(url, timeout=tiempo_maximo)
+        hoteles = respuesta.json()
         return jsonify({
-            "mensaje": "Cliente no encontrado"
-        }), 404
-
-    respuesta = requests.get(
-        f"{url_hoteles}/hoteles/{clienteEncontrado['hotel_id']}"
-    )
-
-    if respuesta.status_code != 200:
-        return jsonify({
-            "mensaje": "Hotel no encontrado"
-        }), 404
-
-    hotel = respuesta.json()
-
-    return jsonify({
-        "cliente": clienteEncontrado["nombre"],
-        "hotel": hotel["hotel"],
-        "ciudad": hotel["ciudad"],
-        "direccion": hotel["direccion"]
-    })
+            "cliente": cliente["nombre"],
+            "hotel": hoteles["hotel"],
+            "ciudad": hoteles["ciudad"],
+            "direccion": hoteles["direccion"]
+        }), 200
+    except requests.exceptions.ConnectionError:
+        return jsonify({"mensaje": "Servicio de hoteles no disponible"}), 503
+    except requests.exceptions.Timeout:
+        return jsonify({"mensaje": "Usuarios tardo demasiado en responder"}), 504
+    if respuesta.status_code == 404:
+        return jsonify({"mensaje": "Hotel no encontrado"}), 404 
 
 
 app.run(host="0.0.0.0", port=5000)
