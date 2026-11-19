@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import requests, os
+import requests, os, pybreaker
 from database import conectar
 
 app = Flask(__name__)
@@ -157,29 +157,55 @@ def detalle(id):
     cursor = conexion.cursor(dictionary=True)
     cursor.execute(
         "SELECT * FROM clientes WHERE id = %s", (id,)
-        )
+    )
     cliente = cursor.fetchone()
     cursor.close()
     conexion.close()
+    
     if cliente is None:
-        return jsonify({ "mensaje": "Cliente no encontrado"}), 404
+        return jsonify({ "mensaje": "Cliente no encontrado" }), 404
+        
     hoteles_id = cliente["hotel_id"]
-    url = (os.getenv("URL_HOTELES") + "/hoteles/" + str(hoteles_id))
+    url = f"{url_hoteles}/hoteles/{hoteles_id}"
+    
     try:
-        respuesta = requests.get(url, timeout=tiempo_maximo)
-        hoteles = respuesta.json()
-        return jsonify({
-            "cliente": cliente["nombre"],
-            "hotel": hoteles["hotel"],
-            "ciudad": hoteles["ciudad"],
-            "direccion": hoteles["direccion"]
-        }), 200
-    except requests.exceptions.ConnectionError:
-        return jsonify({"mensaje": "Servicio de hoteles no disponible"}), 503
+        with circuito_hoteles.calling():
+            respuesta = requests.get(url, timeout=tiempo_maximo)
+            
+            if respuesta.status_code == 404:
+                return jsonify({"mensaje": "Hotel no encontrado"}), 404
+                
+    except pybreaker.CircuitBreakerError:
+        return jsonify({"mensaje": "Circuito abierto: Servicio de hoteles no disponible"}), 503
     except requests.exceptions.Timeout:
         return jsonify({"mensaje": "Usuarios tardo demasiado en responder"}), 504
-    if respuesta.status_code == 404:
-        return jsonify({"mensaje": "Hotel no encontrado"}), 404 
+    except requests.exceptions.ConnectionError:
+        return jsonify({"mensaje": "Servicio de hoteles no disponible"}), 503
+
+    hoteles = respuesta.json()
+    return jsonify({
+        "cliente": cliente["nombre"],
+        "hotel": hoteles["hotel"],
+        "ciudad": hoteles["ciudad"],
+        "direccion": hoteles["direccion"]
+    }), 200
+    
+# Configuración del Circuit Breaker para proteger las llamadas a Hoteles
+circuito_hoteles = pybreaker.CircuitBreaker(
+    fail_max=int(os.getenv("CB_MAX_FALLOS", "3")), 
+    reset_timeout=int(os.getenv("CB_RECUPERACION", "30")), 
+    throw_new_error_on_trip=False
+)
+
+# Endpoint de diagnóstico del Circuit Breaker de Clientes/Hoteles
+@app.route("/clientes/circuito", methods=["GET"])
+def estado_circuito_clientes():
+    return jsonify({
+        "estado": circuito_hoteles.current_state.upper(),
+        "fallos_consecutivos": circuito_hoteles.fail_counter,
+        "umbral_fallos": circuito_hoteles.fail_max,
+        "periodo_recuperacion": circuito_hoteles.reset_timeout
+    }), 200
 
 
 app.run(host="0.0.0.0", port=5000)

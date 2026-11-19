@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import time
 from database import conectar
 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ def listar():
 
 @app.route("/hoteles/<int:id>")
 def buscar(id):
+    ##time.sleep(5)
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
 
