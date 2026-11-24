@@ -23,6 +23,31 @@ services:
       - .env
     depends_on:
       - mysql_hoteles
+
+  reservas:
+    build: ./reservas
+    ports:
+      - "5003:5000"
+    env_file:
+      - .env
+    depends_on:
+      - mysql_reservas
+      - clientes
+      - hoteles
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "5000:5000"
+    environment:
+      URL_CLIENTES: ${URL_CLIENTES}
+      URL_HOTELES: ${URL_HOTELES}
+      URL_RESERVAS: ${URL_RESERVAS}
+    depends_on:
+      - clientes
+      - hoteles
+      - reservas
+
 # Bases de datos correspondientes
   mysql_clientes:
     image: mysql:8.0
@@ -44,9 +69,20 @@ services:
     volumes:
       - mysql_hoteles_data:/var/lib/mysql
 
+  mysql_reservas:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: reservas
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_reservas_data:/var/lib/mysql
+
 volumes:
   mysql_clientes_data:
   mysql_hoteles_data:
+  mysql_reservas_data:
 
 
 
