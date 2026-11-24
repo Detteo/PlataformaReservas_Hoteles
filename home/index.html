@@ -3,238 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HotelRes | Plataforma de Reservas</title>
+    <title>HotelRes | Clientes, Hoteles y Reservas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- HEADER / NAVBAR -->
     <header class="navbar">
         <div class="container nav-container">
             <a href="#" class="logo">🏨 Hotel<span>Res</span></a>
             <nav class="nav-links">
-                <a href="#inicio">Inicio</a>
-                <a href="#servicios">Servicios</a>
-                <a href="#clientes">1. Registro Cliente</a>
-                <a href="#hoteles">2. Hoteles</a>
-                <a href="#reservas">3. Reservas</a>
-                <a href="#arquitectura">Arquitectura</a>
-                <a href="#equipo">Equipo</a>
+                <a href="#apartado-cliente">1. Cliente</a>
+                <a href="#apartado-hoteles">2. Hoteles</a>
+                <a href="#apartado-reservas">3. Reservas</a>
             </nav>
         </div>
     </header>
 
-    <main>
-        <!-- SECCIÓN INICIO / HERO -->
-        <section id="inicio" class="hero">
-            <div class="container hero-grid">
-                <div class="hero-text">
-                    <span class="badge">SISTEMA DISTRIBUIDO CON DOCKER + API GATEWAY</span>
-                    <h1>Plataforma de Reservas e Infraestructura Hotelera</h1>
-                    <p>
-                        Regístrate como cliente, explora los hoteles disponibles y gestiona tu reserva
-                        a través de nuestra arquitectura de microservicios centralizada con API Gateway.
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="#clientes" class="btn primary">Comenzar Registro →</a>
-                        <a href="#hoteles" class="btn secondary">Ver Hoteles</a>
-                    </div>
-                </div>
-                <div class="hero-card">
-                    <div class="card-status">● Contenedores Activos</div>
-                    <h3>Flujo del Usuario</h3>
-                    <p>Todo conectado mediante el API Gateway (Puerto 5000).</p>
-                    <ul class="card-list">
-                        <li><span>1.</span> Regístrate en el Servicio de Clientes</li>
-                        <li><span>2.</span> Consulta los Hoteles disponibles</li>
-                        <li><span>3.</span> Realiza y consulta tu Reserva</li>
-                    </ul>
-                </div>
+    <main class="container main-content">
+
+        <!-- APARTADO 1: NOMBRE DEL CLIENTE Y SU ID -->
+        <section id="apartado-cliente" class="card-section">
+            <h2>1. Registro de Cliente</h2>
+            <p class="desc">Ingresa el nombre de la persona para crear el cliente y obtener su ID.</p>
+
+            <form id="form-cliente" class="inline-form">
+                <input
+                    type="text"
+                    id="input-nombre-cliente"
+                    placeholder="Ej. daniel"
+                    required
+                >
+                <button type="submit" class="btn primary">Crear Cliente</button>
+            </form>
+
+            <div id="resultado-cliente" class="resultado-box">
+                Aún no has creado un cliente.
             </div>
         </section>
 
-        <!-- SECCIÓN SERVICIOS IMPLEMENTADOS -->
-        <section id="servicios" class="section">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">MÓDULOS DEL SISTEMA</span>
-                    <h2>Servicios Principales</h2>
+        <!-- APARTADO 2: HOTELES DISPONIBLES CON SU ID -->
+        <section id="apartado-hoteles" class="card-section">
+            <div class="section-header">
+                <div>
+                    <h2>2. Hoteles Disponibles</h2>
+                    <p class="desc">Hoteles registrados en el sistema con su ID, hotel, ciudad y dirección.</p>
                 </div>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <div class="service-icon">👤</div>
-                        <h3>Servicio de Clientes</h3>
-                        <p>Permite el registro de usuarios en la plataforma para habilitar sus reservaciones.</p>
-                        <span class="tech-tag">Flask + Requests + MySQL</span>
-                    </div>
-                    <div class="service-card">
-                        <div class="service-icon">🏨</div>
-                        <h3>Servicio de Hoteles</h3>
-                        <p>Expone el catálogo de alojamientos disponibles administrados en el sistema (nombre, ciudad y dirección).</p>
-                        <span class="tech-tag">Flask + MySQL</span>
-                    </div>
-                    <div class="service-card">
-                        <div class="service-icon">📅</div>
-                        <h3>Servicio de Reservas</h3>
-                        <p>Gestiona las reservaciones validando cliente y hotel con timeouts y circuit breaker.</p>
-                        <span class="tech-tag">Flask + PyBreaker + MySQL</span>
-                    </div>
-                </div>
+                <button id="btn-cargar-hoteles" type="button" class="btn secondary">Actualizar Hoteles</button>
+            </div>
+
+            <div id="lista-hoteles" class="grid-cards">
+                <p class="muted">Cargando hoteles...</p>
             </div>
         </section>
 
-        <!-- PASO 1: CLIENTES (SOLO REGISTRO DE USUARIO) -->
-        <section id="clientes" class="section bg-light">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">PASO 1 · REGISTRO DE USUARIO</span>
-                    <h2>Servicio de Clientes</h2>
-                    <p>Regístrate primero para obtener tu ID de cliente y poder reservar en un hotel.</p>
+        <!-- APARTADO 3: RESERVAS -->
+        <section id="apartado-reservas" class="card-section">
+            <div class="section-header">
+                <div>
+                    <h2>3. Reservas</h2>
+                    <p class="desc">Ingresa el ID del cliente, el ID del hotel y las fechas para crear una reserva.</p>
+                </div>
+                <button id="btn-cargar-reservas" type="button" class="btn secondary">Actualizar Reservas</button>
+            </div>
+
+            <form id="form-reserva" class="reserva-form">
+                <div class="campo">
+                    <label for="input-cliente-id">ID del Cliente</label>
+                    <input type="number" id="input-cliente-id" min="1" placeholder="Ej. 1" required>
                 </div>
 
-                <div style="max-width: 480px; margin: 0 auto;">
-                    <form id="form-cliente" class="form-card">
-                        <h3>Crear Cuenta de Cliente</h3>
-                        <div class="form-group">
-                            <label for="cliente-nombre">Nombre completo</label>
-                            <input type="text" id="cliente-nombre" placeholder="Ej. Ana María López" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cliente-correo">Correo electrónico</label>
-                            <input type="email" id="cliente-correo" placeholder="Ej. ana@correo.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cliente-telefono">Teléfono</label>
-                            <input type="text" id="cliente-telefono" placeholder="Ej. 3001234567" required>
-                        </div>
-                        <button type="submit" class="btn primary full-width">Registrarme</button>
-                        <div id="msg-cliente" class="feedback"></div>
-                    </form>
+                <div class="campo">
+                    <label for="input-hotel-id">ID del Hotel</label>
+                    <input type="number" id="input-hotel-id" min="1" placeholder="Ej. 1" required>
                 </div>
+
+                <div class="campo">
+                    <label for="input-fecha-entrada">Fecha de entrada</label>
+                    <input type="date" id="input-fecha-entrada" required>
+                </div>
+
+                <div class="campo">
+                    <label for="input-fecha-salida">Fecha de salida</label>
+                    <input type="date" id="input-fecha-salida" required>
+                </div>
+
+                <div class="campo">
+                    <label for="select-estado">Estado</label>
+                    <select id="select-estado">
+                        <option value="CONFIRMADA" selected>CONFIRMADA</option>
+                        <option value="PENDIENTE">PENDIENTE</option>
+                    </select>
+                </div>
+
+                <div class="campo-btn">
+                    <button type="submit" class="btn primary">Crear Reserva</button>
+                </div>
+            </form>
+
+            <div id="mensaje-reserva" class="resultado-box"></div>
+
+            <div id="lista-reservas" class="grid-cards">
+                <p class="muted">Cargando reservas...</p>
             </div>
         </section>
 
-        <!-- PASO 2: HOTELES (SOLO CONSULTA DE HOTELES REGISTRADOS) -->
-        <section id="hoteles" class="section">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">PASO 2 · CATÁLOGO DISPONIBLE</span>
-                    <h2>Hoteles Registrados</h2>
-                    <p>Selecciona un hotel disponible en el sistema para iniciar tu reserva.</p>
-                </div>
-
-                <div class="list-panel">
-                    <div class="toolbar">
-                        <h3>Alojamientos Disponibles</h3>
-                        <button id="btn-cargar-hoteles" class="btn secondary" type="button">Actualizar Hoteles</button>
-                    </div>
-                    <div id="hoteles-container" class="cards-grid">
-                        <p class="placeholder-text">Cargando hoteles...</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PASO 3: GESTIÓN DE RESERVAS -->
-        <section id="reservas" class="section bg-light">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">PASO 3 · RESERVACIÓN</span>
-                    <h2>Gestión de Reservas</h2>
-                    <p>Con tu ID de cliente registrado y el hotel elegido, completa tu reserva.</p>
-                </div>
-
-                <div class="panel-grid">
-                    <form id="form-reserva" class="form-card">
-                        <h3>Nueva Reserva</h3>
-                        <div class="form-group">
-                            <label for="reserva-cliente-id">ID del Cliente</label>
-                            <input type="number" id="reserva-cliente-id" min="1" placeholder="Ej. 1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="reserva-hotel-id">ID del Hotel</label>
-                            <input type="number" id="reserva-hotel-id" min="1" placeholder="Ej. 1" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="reserva-entrada">Fecha de entrada</label>
-                                <input type="date" id="reserva-entrada" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="reserva-salida">Fecha de salida</label>
-                                <input type="date" id="reserva-salida" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="reserva-estado">Estado</label>
-                            <select id="reserva-estado">
-                                <option value="CONFIRMADA" selected>CONFIRMADA</option>
-                                <option value="PENDIENTE">PENDIENTE</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn primary full-width">Confirmar Reserva</button>
-                        <div id="msg-reserva" class="feedback"></div>
-                    </form>
-
-                    <div class="list-panel">
-                        <div class="toolbar">
-                            <h3>Reservas Realizadas</h3>
-                            <button id="btn-cargar-reservas" class="btn secondary" type="button">Actualizar Reservas</button>
-                        </div>
-                        <div id="reservas-container" class="cards-grid">
-                            <p class="placeholder-text">Cargando reservas...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN ARQUITECTURA -->
-        <section id="arquitectura" class="section">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">DISEÑO TÉCNICO</span>
-                    <h2>Esquema de Comunicación</h2>
-                </div>
-                <div class="arch-box">
-                    <div class="arch-node">Frontend<br><small>Nginx (:8080)</small></div>
-                    <div class="arch-arrow">→</div>
-                    <div class="arch-node">API Gateway<br><small>Puerto 5000</small></div>
-                    <div class="arch-arrow">→</div>
-                    <div class="arch-node">Clientes / Hoteles / Reservas<br><small>Puertos 5002 / 5001 / 5003</small></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN EQUIPO -->
-        <section id="equipo" class="section bg-light">
-            <div class="container">
-                <div class="section-title">
-                    <span class="subtitle">COLABORACIÓN</span>
-                    <h2>Equipo de Desarrollo</h2>
-                </div>
-                <div class="team-grid">
-                    <div class="team-card">
-                        <h3>Jonathán Gallego</h3>
-                        <p></p>
-                    </div>
-                    <div class="team-card">
-                        <h3>Daniel Guzmán</h3>
-                        <p></p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container footer-content">
-            <p>© 2026 Plataforma de Reservas de Hoteles - Todos los derechos reservados.</p>
-            <p>Ejecutado con Docker Compose 🐳</p>
-        </div>
-    </footer>
 
     <script src="script.js"></script>
 </body>
 </html>
+```[cite: 3]

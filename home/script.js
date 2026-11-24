@@ -1,108 +1,88 @@
-// Todas las peticiones pasan por el API Gateway
 const GATEWAY_URL = "http://localhost:5000";
 
-function mostrarMensaje(elementoId, texto, esError = false) {
-    const el = document.getElementById(elementoId);
-    el.textContent = texto;
-    el.className = `feedback ${esError ? "err" : "ok"}`;
-}
-
-function seleccionarHotelParaReserva(hotelId) {
-    document.getElementById("reserva-hotel-id").value = hotelId;
-    document.getElementById("reservas").scrollIntoView({ behavior: "smooth" });
-}
-
-// Normaliza respuestas que vengan como [...] o como { clave: [...] }
-function extraerLista(data, posiblesClaves) {
+function extraerLista(data, clavesProbables = []) {
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") {
-        for (const clave of posiblesClaves) {
-            if (Array.isArray(data[clave])) return data[clave];
+        for (const k of clavesProbables) {
+            if (Array.isArray(data[k])) return data[k];
         }
-        const primerArray = Object.values(data).find((val) => Array.isArray(val));
+        const primerArray = Object.values(data).find((v) => Array.isArray(v));
         if (primerArray) return primerArray;
     }
     return [];
 }
 
-// ==================== 1. CLIENTES (SOLO REGISTRO) ====================
+// ==================== 1. CLIENTE ====================
 document.getElementById("form-cliente").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const payload = {
-        nombre: document.getElementById("cliente-nombre").value.trim(),
-        correo: document.getElementById("cliente-correo").value.trim(),
-        telefono: document.getElementById("cliente-telefono").value.trim(),
-    };
+    const inputNombre = document.getElementById("input-nombre-cliente");
+    const cajaResultado = document.getElementById("resultado-cliente");
+    const nombre = inputNombre.value.trim();
+
+    if (!nombre) return;
 
     try {
         const resp = await fetch(`${GATEWAY_URL}/clientes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({ nombre }),
         });
+
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) {
-            throw new Error(data.mensaje || `Error HTTP ${resp.status} al registrar cliente.`);
+            throw new Error(data.mensaje || `Error ${resp.status} al crear cliente`);
         }
 
-        const nuevoId = data.id ?? data.cliente_id ?? data.cliente?.id;
-        if (nuevoId) {
-            document.getElementById("reserva-cliente-id").value = nuevoId;
+        const clienteId = data.id ?? data.cliente_id ?? data.cliente?.id ?? "?";
+        const nombreCreado = data.nombre ?? data.cliente?.nombre ?? nombre;
+
+        cajaResultado.className = "resultado-box ok";
+        cajaResultado.textContent = `cliente ${nombreCreado} CREADO id:${clienteId}`;
+
+        if (clienteId !== "?") {
+            document.getElementById("input-cliente-id").value = clienteId;
         }
 
-        mostrarMensaje(
-            "msg-cliente",
-            nuevoId
-                ? `Registro exitoso. Tu ID de cliente es ${nuevoId} (ya quedó cargado en Reservas).`
-                : (data.mensaje || "Cliente registrado correctamente. Ahora elige un hotel para reservar.")
-        );
-        e.target.reset();
-    } catch (error) {
-        mostrarMensaje("msg-cliente", error.message, true);
+        inputNombre.value = "";
+    } catch (err) {
+        cajaResultado.className = "resultado-box err";
+        cajaResultado.textContent = `Error: ${err.message}`;
     }
 });
 
-// ==================== 2. HOTELES (SOLO CONSULTA) ====================
+// ==================== 2. HOTELES ====================
 async function cargarHoteles() {
-    const contenedor = document.getElementById("hoteles-container");
-    contenedor.innerHTML = "<p class='loading'>Cargando hoteles registrados...</p>";
+    const contenedor = document.getElementById("lista-hoteles");
+    contenedor.innerHTML = `<p class="muted">Cargando hoteles...</p>`;
 
     try {
-        const respuesta = await fetch(`${GATEWAY_URL}/hoteles`);
-        if (!respuesta.ok) {
-            throw new Error(`El gateway respondió con estado ${respuesta.status}.`);
+        const resp = await fetch(`${GATEWAY_URL}/hoteles`);
+        if (!resp.ok) {
+            throw new Error(`Error ${resp.status} al consultar /hoteles`);
         }
 
-        const data = await respuesta.json();
-        const hoteles = extraerLista(data, ["hoteles", "data", "items", "resultados"]);
+        const data = await resp.json();
+        const hoteles = extraerLista(data, ["hoteles", "data"]);
 
         if (hoteles.length === 0) {
-            contenedor.innerHTML = "<p class='placeholder-text'>No hay hoteles registrados en el sistema.</p>";
+            contenedor.innerHTML = `<p class="muted">No hay hoteles registrados.</p>`;
             return;
         }
 
         contenedor.innerHTML = "";
-        hoteles.forEach((hotel) => {
-            const nombreHotel = hotel.hotel ?? hotel.nombre ?? "Hotel";
-            const idHotel = hotel.id ?? hotel.hotel_id;
+        hoteles.forEach((h) => {
             const card = document.createElement("div");
-            card.className = "item-card";
+            card.className = "dato-card";
             card.innerHTML = `
-                <h4>🏨 ${nombreHotel} ${idHotel ? `(ID: ${idHotel})` : ""}</h4>
-                <p><strong>Ciudad:</strong> ${hotel.ciudad ?? "-"}</p>
-                <p><strong>Dirección:</strong> ${hotel.direccion ?? "-"}</p>
-                ${idHotel ? `<button type="button" class="btn primary small" onclick="seleccionarHotelParaReserva(${idHotel})">Reservar aquí</button>` : ""}
+                <p><strong>id:</strong> ${h.id ?? "-"}</p>
+                <p><strong>hotel:</strong> ${h.hotel ?? h.nombre ?? "-"}</p>
+                <p><strong>ciudad:</strong> ${h.ciudad ?? "-"}</p>
+                <p><strong>direccion:</strong> ${h.direccion ?? "-"}</p>
             `;
             contenedor.appendChild(card);
         });
-    } catch (error) {
-        console.error("Error cargando hoteles:", error);
-        contenedor.innerHTML = `
-            <div class="error-box">
-                <p>⚠️ No se pudieron cargar los hoteles: ${error.message}</p>
-                <small>Verifica que el gateway (puerto 5000) y el servicio de hoteles estén activos.</small>
-            </div>
-        `;
+    } catch (err) {
+        contenedor.innerHTML = `<div class="error-msg">No se pudieron cargar los hoteles: ${err.message}</div>`;
     }
 }
 
@@ -110,47 +90,39 @@ document.getElementById("btn-cargar-hoteles").addEventListener("click", cargarHo
 
 // ==================== 3. RESERVAS ====================
 async function cargarReservas() {
-    const contenedor = document.getElementById("reservas-container");
-    contenedor.innerHTML = "<p class='loading'>Cargando reservas desde el API Gateway...</p>";
+    const contenedor = document.getElementById("lista-reservas");
+    contenedor.innerHTML = `<p class="muted">Cargando reservas...</p>`;
 
     try {
-        const respuesta = await fetch(`${GATEWAY_URL}/reservas`);
-        if (!respuesta.ok) {
-            throw new Error(`El gateway respondió con estado ${respuesta.status}.`);
+        const resp = await fetch(`${GATEWAY_URL}/reservas`);
+        if (!resp.ok) {
+            throw new Error(`Error ${resp.status} al consultar /reservas`);
         }
 
-        const data = await respuesta.json();
-        const reservas = extraerLista(data, ["reservas", "data", "items", "resultados"]);
+        const data = await resp.json();
+        const reservas = extraerLista(data, ["reservas", "data"]);
 
         if (reservas.length === 0) {
-            contenedor.innerHTML = "<p class='placeholder-text'>No hay reservas registradas aún.</p>";
+            contenedor.innerHTML = `<p class="muted">No hay reservas registradas.</p>`;
             return;
         }
 
         contenedor.innerHTML = "";
-        reservas.forEach((reserva) => {
-            const entrada = String(reserva.fecha_entrada ?? "").slice(0, 10);
-            const salida = String(reserva.fecha_salida ?? "").slice(0, 10);
+        reservas.forEach((r) => {
             const card = document.createElement("div");
-            card.className = "item-card";
+            card.className = "dato-card";
             card.innerHTML = `
-                <h4>📅 Reserva #${reserva.id ?? "-"}</h4>
-                <p><strong>Cliente ID:</strong> ${reserva.cliente_id ?? "-"}</p>
-                <p><strong>Hotel ID:</strong> ${reserva.hotel_id ?? "-"}</p>
-                <p><strong>Entrada:</strong> ${entrada || "-"}</p>
-                <p><strong>Salida:</strong> ${salida || "-"}</p>
-                <span class="status-badge">${reserva.estado ?? "CONFIRMADA"}</span>
+                <p><strong>id:</strong> ${r.id ?? "-"}</p>
+                <p><strong>cliente_id:</strong> ${r.cliente_id ?? "-"}</p>
+                <p><strong>hotel_id:</strong> ${r.hotel_id ?? "-"}</p>
+                <p><strong>fecha_entrada:</strong> ${r.fecha_entrada ?? "-"}</p>
+                <p><strong>fecha_salida:</strong> ${r.fecha_salida ?? "-"}</p>
+                <p><strong>estado:</strong> ${r.estado ?? "-"}</p>
             `;
             contenedor.appendChild(card);
         });
-    } catch (error) {
-        console.error("Error cargando reservas:", error);
-        contenedor.innerHTML = `
-            <div class="error-box">
-                <p>⚠️ No se pudieron cargar las reservas: ${error.message}</p>
-                <small>Verifica que el gateway (puerto 5000) y el servicio de reservas estén activos.</small>
-            </div>
-        `;
+    } catch (err) {
+        contenedor.innerHTML = `<div class="error-msg">No se pudieron cargar las reservas: ${err.message}</div>`;
     }
 }
 
@@ -158,12 +130,14 @@ document.getElementById("btn-cargar-reservas").addEventListener("click", cargarR
 
 document.getElementById("form-reserva").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const cajaMsg = document.getElementById("mensaje-reserva");
+
     const payload = {
-        cliente_id: Number(document.getElementById("reserva-cliente-id").value),
-        hotel_id: Number(document.getElementById("reserva-hotel-id").value),
-        fecha_entrada: document.getElementById("reserva-entrada").value,
-        fecha_salida: document.getElementById("reserva-salida").value,
-        estado: document.getElementById("reserva-estado").value,
+        cliente_id: Number(document.getElementById("input-cliente-id").value),
+        hotel_id: Number(document.getElementById("input-hotel-id").value),
+        fecha_entrada: document.getElementById("input-fecha-entrada").value,
+        fecha_salida: document.getElementById("input-fecha-salida").value,
+        estado: document.getElementById("select-estado").value,
     };
 
     try {
@@ -172,15 +146,19 @@ document.getElementById("form-reserva").addEventListener("submit", async (e) => 
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
+
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) {
-            throw new Error(data.mensaje || `Error HTTP ${resp.status} al crear reserva.`);
+            throw new Error(data.mensaje || `Error ${resp.status} al crear reserva`);
         }
-        mostrarMensaje("msg-reserva", data.mensaje || "Reserva creada correctamente.");
-        e.target.reset();
+
+        cajaMsg.className = "resultado-box ok";
+        cajaMsg.textContent = `Reserva creada (id: ${data.id ?? "ok"}) · cliente_id: ${payload.cliente_id} · hotel_id: ${payload.hotel_id}`;
+
         await cargarReservas();
-    } catch (error) {
-        mostrarMensaje("msg-reserva", error.message, true);
+    } catch (err) {
+        cajaMsg.className = "resultado-box err";
+        cajaMsg.textContent = `Error: ${err.message}`;
     }
 });
 
